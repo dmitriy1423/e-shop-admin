@@ -187,7 +187,7 @@ const Categories = ({ swal }: { swal: any }) => {
 							<button
 								onClick={() => removeProperty(index)}
 								type="button"
-								className="btn-default"
+								className="btn-red"
 							>
 								Remove
 							</button>
@@ -234,13 +234,13 @@ const Categories = ({ swal }: { swal: any }) => {
 										<div className="flex">
 											<button
 												onClick={() => editCategory(category)}
-												className="btn-primary mr-1"
+												className="btn-default mr-1"
 											>
 												Edit
 											</button>
 											<button
 												onClick={() => deleteCategory(category)}
-												className="btn-primary"
+												className="btn-red"
 											>
 												Delete
 											</button>
@@ -254,8 +254,6 @@ const Categories = ({ swal }: { swal: any }) => {
 		</>
 	)
 }
-
-/* export default Categories */
 
 export default withSwal(({ swal }: { swal: any }, ref: any) => (
 	<Categories swal={swal} />

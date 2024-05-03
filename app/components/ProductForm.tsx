@@ -155,18 +155,20 @@ const ProductForm: FC<ProductFormProps> = ({
 				</select>
 				{propertiesToFill.length > 0 &&
 					propertiesToFill.map((p, index) => (
-						<div className="flex gap-1" key={index}>
-							<div>{p.name}</div>
-							<select
-								{...register(`properties[${p.name}]`)}
-								defaultValue={getValues(`properties[${p.name}]`)}
-							>
-								{p.values.map((v, idx) => (
-									<option key={idx} value={v}>
-										{v}
-									</option>
-								))}
-							</select>
+						<div className="" key={index}>
+							<label>{p.name[0].toUpperCase() + p.name.slice(1)}</label>
+							<div>
+								<select
+									{...register(`properties[${p.name}]`)}
+									defaultValue={getValues(`properties[${p.name}]`)}
+								>
+									{p.values.map((v, idx) => (
+										<option key={idx} value={v}>
+											{v}
+										</option>
+									))}
+								</select>
+							</div>
 						</div>
 					))}
 				<label>Photos</label>
@@ -179,7 +181,10 @@ const ProductForm: FC<ProductFormProps> = ({
 					>
 						{!!productImages?.length &&
 							productImages.map((link: string) => (
-								<div key={link} className="h-24">
+								<div
+									key={link}
+									className="h-24 bg-white p-4 shadow-sm rounded-sm border-gray-200"
+								>
 									<img
 										src={link}
 										alt=""
@@ -193,9 +198,9 @@ const ProductForm: FC<ProductFormProps> = ({
 							<Spinner />
 						</div>
 					)}
-					<label className="w-24 h-24 cursor-pointer border text-center text-sm flex items-center justify-center gap-1 text-gray-500 rounded-lg bg-gray-200">
+					<label className="w-24 h-24 cursor-pointer border text-center text-sm flex flex-col items-center justify-center gap-1 text-primary rounded-sm bg-white shadow-sm border-primary">
 						<MdUpload />
-						<div>Upload</div>
+						<div>Add Image</div>
 						<input
 							type="file"
 							className="hidden"

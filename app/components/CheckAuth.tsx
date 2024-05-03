@@ -2,9 +2,11 @@
 
 import { SafeUser } from '@/types'
 import { signIn } from 'next-auth/react'
-import { FC, PropsWithChildren, useEffect } from 'react'
+import { FC, PropsWithChildren, useEffect, useState } from 'react'
 import Nav from './Nav'
 import { useRouter } from 'next/navigation'
+import { MdMenu } from 'react-icons/md'
+import Logo from './Logo'
 
 interface CheckAuthProps {
 	user: SafeUser | null
@@ -15,12 +17,15 @@ const CheckAuth: FC<PropsWithChildren<CheckAuthProps>> = ({
 	children
 }) => {
 	const router = useRouter()
+	const [isShowNav, setIsShowNav] = useState(false)
+
 	useEffect(() => {
-		router.push('/')
+		if (!user) router.push('/')
 	}, [user])
+
 	if (!user) {
 		return (
-			<div className="bg-blue-900 w-screen h-screen flex items-center">
+			<div className="bg-bgGray w-screen h-screen flex items-center">
 				<div className="text-center w-full">
 					<button
 						onClick={() => signIn('google')}
@@ -33,11 +38,23 @@ const CheckAuth: FC<PropsWithChildren<CheckAuthProps>> = ({
 		)
 	}
 
+	const handleClick = () => {
+		setIsShowNav(false)
+	}
+
 	return (
-		<div className="bg-blue-900 min-h-screen flex">
-			<Nav />
-			<div className="bg-white flex-grow mt-2 mr-2 mb-2 rounded-lg p-4">
-				{children}
+		<div className="bg-bgGray min-h-screen">
+			<div className="md:hidden flex items-center p-4">
+				<button onClick={() => setIsShowNav(true)}>
+					<MdMenu size={20} />
+				</button>
+				<div className="flex grow justify-center mr-6">
+					<Logo />
+				</div>
+			</div>
+			<div className=" flex">
+				<Nav isShow={isShowNav} onClick={handleClick} />
+				<div className="flex-grow p-4">{children}</div>
 			</div>
 		</div>
 	)

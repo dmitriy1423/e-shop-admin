@@ -17,10 +17,7 @@ const Products = () => {
 
 	return (
 		<>
-			<Link
-				className="bg-blue-900 rounded-md text-white py-1 px-2"
-				href={'/products/new'}
-			>
+			<Link className="btn-primary" href={'/products/new'}>
 				Add new product
 			</Link>
 			<table className="basic mt-2">
@@ -35,11 +32,17 @@ const Products = () => {
 						<tr key={product.id}>
 							<td>{product.title}</td>
 							<td>
-								<Link href={`/products/edit/${product.id}`}>
+								<Link
+									href={`/products/edit/${product.id}`}
+									className="btn-default"
+								>
 									<MdEdit />
 									Edit
 								</Link>
-								<Link href={`/products/delete/${product.id}`}>
+								<Link
+									href={`/products/delete/${product.id}`}
+									className="btn-red"
+								>
 									<MdDelete />
 									Delete
 								</Link>
