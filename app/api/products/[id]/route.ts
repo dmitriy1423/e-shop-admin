@@ -1,10 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/libs/prisma'
+import { isAdminRequest } from '../../auth/[...nextauth]/route'
 
 export async function GET(
-	req: Request,
+	req: NextRequest,
+	/* res: NextResponse, */
 	{ params }: { params: { id: string } }
 ) {
+	await isAdminRequest()
 	try {
 		const product = await prisma.product.findUnique({
 			where: { id: params.id }
@@ -17,9 +20,11 @@ export async function GET(
 }
 
 export async function DELETE(
-	req: Request,
+	req: NextRequest,
+	/* res: NextResponse, */
 	{ params }: { params: { id: string } }
 ) {
+	await isAdminRequest()
 	try {
 		const product = await prisma.product.findUnique({
 			where: { id: params.id }

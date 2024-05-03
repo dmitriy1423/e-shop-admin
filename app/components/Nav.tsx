@@ -1,13 +1,15 @@
 'use client'
 
+import { signOut } from 'next-auth/react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 import {
 	MdBadge,
 	MdCategory,
 	MdHome,
 	MdList,
+	MdLogout,
 	MdSettings,
 	MdShop
 } from 'react-icons/md'
@@ -16,6 +18,12 @@ const Nav = () => {
 	const inactiveLink = 'flex items-center gap-1 p-1'
 	const activeLink = inactiveLink + ' bg-white text-blue-900 rounded-l-lg'
 	const pathname = usePathname()
+	const router = useRouter()
+
+	const logout = async () => {
+		router.push('/')
+		await signOut()
+	}
 
 	return (
 		<aside className="text-white p-4 pr-0">
@@ -56,6 +64,9 @@ const Nav = () => {
 				>
 					<MdSettings /> Settings
 				</Link>
+				<button onClick={logout} className={inactiveLink}>
+					<MdLogout /> Logout
+				</button>
 			</nav>
 		</aside>
 	)

@@ -1,7 +1,12 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import NextAuth, { AuthOptions } from 'next-auth'
+import NextAuth, { AuthOptions, getServerSession } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import prisma from '@/libs/prisma'
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentUser } from '@/actions/getCurrentUser'
+import { SafeUser } from '@/types'
+
+const adminEmails = ['01txxt10@gmail.com']
 
 export const authOptions: AuthOptions = {
 	adapter: PrismaAdapter(prisma),
@@ -11,6 +16,16 @@ export const authOptions: AuthOptions = {
 			clientSecret: process.env.GOOGLE_SECRET as string
 		})
 	],
+	callbacks: {
+		session: ({ session, token, user }) => {
+			if (adminEmails.includes(session?.user?.email)) {
+				return session
+			} else {
+				return false
+			}
+		}
+	},
+
 	session: {
 		strategy: 'jwt'
 	},
@@ -21,3 +36,11 @@ export const authOptions: AuthOptions = {
 const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
+
+export async function isAdminRequest() {
+	const user = await getCurrentUser()
+
+	if (!adminEmails.includes(user?.email)) {
+		throw 'not an admin'
+	}
+}

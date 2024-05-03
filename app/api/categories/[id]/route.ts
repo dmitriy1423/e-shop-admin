@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/libs/prisma'
+import { isAdminRequest } from '../../auth/[...nextauth]/route'
 
 export async function GET(
 	req: NextRequest,
+	/* res: NextResponse, */
 	{ params }: { params: { id: string } }
 ) {
+	await isAdminRequest()
 	const categories = await prisma.category.findUnique({
 		where: { id: params.id },
 		include: {
@@ -21,9 +24,11 @@ export async function GET(
 }
 
 export async function DELETE(
-	req: Request,
+	req: NextRequest,
+	/* res: NextResponse, */
 	{ params }: { params: { id: string } }
 ) {
+	await isAdminRequest()
 	try {
 		const category = await prisma.category.findUnique({
 			where: { id: params.id },

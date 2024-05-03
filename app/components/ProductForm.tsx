@@ -57,7 +57,7 @@ const ProductForm: FC<ProductFormProps> = ({
 			price: existingPrice || 0,
 			images: existingImages || [],
 			categoryId: existingCategoryId || '',
-			properties: existingProperties
+			properties: {}
 		}
 	})
 
@@ -68,15 +68,15 @@ const ProductForm: FC<ProductFormProps> = ({
 	}, [])
 
 	useEffect(() => {
+		console.log(existingCategoryId)
 		if (existingCategoryId) {
 			axios.get(`/api/categories/${existingCategoryId}`).then(result => {
 				setValue('categoryId', result.data.id)
 			})
 		}
-	}, [existingCategoryId, setValue])
+	}, [existingCategoryId, setValue, getValues('properties')])
 
 	const saveProduct: SubmitHandler<FieldValues> = async data => {
-		console.log(data)
 		if (id) {
 			await axios.put('/api/products', { ...data, id }).then(res => {
 				router.push('/products')

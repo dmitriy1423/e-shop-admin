@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/libs/prisma'
+import { isAdminRequest } from '../auth/[...nextauth]/route'
 
 export async function GET(req: NextRequest, res: NextResponse) {
+	await isAdminRequest()
 	const products = await prisma.product.findMany({
 		include: {
 			category: true
@@ -12,6 +14,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
+	await isAdminRequest()
 	const body = await req.json()
 	const { title, description, price, images, categoryId, properties } = body
 
@@ -33,6 +36,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 }
 
 export async function PUT(req: NextRequest, res: NextResponse) {
+	await isAdminRequest()
 	const body = await req.json()
 	const { id, title, description, price, images, categoryId, properties } = body
 

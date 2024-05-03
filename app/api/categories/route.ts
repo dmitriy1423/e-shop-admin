@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/libs/prisma'
+import { getCurrentUser } from '@/actions/getCurrentUser'
+import { isAdminRequest } from '../auth/[...nextauth]/route'
 
 export async function GET(req: NextRequest, res: NextResponse) {
+	await isAdminRequest()
 	const categories = await prisma.category.findMany({
 		include: {
 			parent: {
@@ -18,6 +21,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
+	await isAdminRequest()
 	const body = await req.json()
 	const { name, parentCategory, properties } = body
 
@@ -64,9 +68,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
 }
 
 export async function PUT(req: NextRequest, res: NextResponse) {
+	await isAdminRequest()
 	const body = await req.json()
 	const { name, parentCategory, properties, id } = body
-	console.log(properties)
 	/* return NextResponse.json('ok') */
 
 	/* let category

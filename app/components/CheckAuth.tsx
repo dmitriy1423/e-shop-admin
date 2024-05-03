@@ -2,8 +2,9 @@
 
 import { SafeUser } from '@/types'
 import { signIn } from 'next-auth/react'
-import { FC, PropsWithChildren } from 'react'
+import { FC, PropsWithChildren, useEffect } from 'react'
 import Nav from './Nav'
+import { useRouter } from 'next/navigation'
 
 interface CheckAuthProps {
 	user: SafeUser | null
@@ -13,6 +14,10 @@ const CheckAuth: FC<PropsWithChildren<CheckAuthProps>> = ({
 	user,
 	children
 }) => {
+	const router = useRouter()
+	useEffect(() => {
+		router.push('/')
+	}, [user])
 	if (!user) {
 		return (
 			<div className="bg-blue-900 w-screen h-screen flex items-center">

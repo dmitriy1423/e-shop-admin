@@ -149,7 +149,7 @@ const Categories = ({ swal }: { swal: any }) => {
 						placeholder="Category name"
 					/>
 					<select {...register('parentCategory')} className="mb-0">
-						<option value={'0'}>No parent category</option>
+						<option value={''}>No parent category</option>
 						{categories.map(category => (
 							<option value={category.id} key={category.id}>
 								{category.name}
