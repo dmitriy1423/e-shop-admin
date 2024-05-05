@@ -60,6 +60,21 @@ model Product {
   updatedAt     DateTime @updatedAt
 }
 
+model Order {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  line_items Json
+  name String
+  email String
+  city String
+  postalCode String
+  streetAddress String
+  country String
+  paid Boolean
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 model Category {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
   name String
