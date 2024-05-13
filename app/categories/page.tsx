@@ -11,6 +11,7 @@ import {
 	useForm
 } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import Skeleton from 'react-loading-skeleton'
 import { withSwal } from 'react-sweetalert2'
 
 export type ExtendedCategory = Category & {
@@ -32,6 +33,7 @@ const Categories = ({ swal }: { swal: any }) => {
 		name: 'properties'
 	})
 	const router = useRouter()
+	const [isLoading, setIsLoading] = useState(false)
 	const [categories, setCategories] = useState<ExtendedCategory[]>([])
 	const [editedCategory, setEditedCategory] = useState<ExtendedCategory | null>(
 		null
@@ -42,9 +44,13 @@ const Categories = ({ swal }: { swal: any }) => {
 	}, [])
 
 	const fetchCategories = () => {
-		axios.get('/api/categories').then(response => {
-			setCategories(response.data)
-		})
+		setIsLoading(true)
+		axios
+			.get('/api/categories')
+			.then(response => {
+				setCategories(response.data)
+			})
+			.finally(() => setIsLoading(false))
 	}
 
 	const saveCategory: SubmitHandler<FieldValues> = async data => {
@@ -118,19 +124,17 @@ const Categories = ({ swal }: { swal: any }) => {
 		append({ name: '', values: '' })
 	}
 
-	const handlePropertyNameChange = (index, newName) => {
+	const handlePropertyNameChange = (index: number, newName: string) => {
 		fields[index].name = newName
 	}
 
-	const handlePropertyValuesChange = (index, newValues) => {
+	const handlePropertyValuesChange = (index: number, newValues: string) => {
 		fields[index].values = newValues
 	}
 
-	const removeProperty = indexToRemove => {
+	const removeProperty = (indexToRemove: number) => {
 		remove(indexToRemove)
 	}
-
-	/* const properties = watch('properties') */
 
 	return (
 		<>
@@ -225,6 +229,15 @@ const Categories = ({ swal }: { swal: any }) => {
 						</tr>
 					</thead>
 					<tbody>
+						{isLoading && (
+							<tr>
+								<td colSpan={3}>
+									<div className="py-4">
+										<Skeleton count={10} />
+									</div>
+								</td>
+							</tr>
+						)}
 						{categories.length > 0 &&
 							categories.map(category => (
 								<tr key={category.id}>

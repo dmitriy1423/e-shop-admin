@@ -5,6 +5,7 @@ import CheckAuth from './components/CheckAuth'
 import { getCurrentUser } from '@/actions/getCurrentUser'
 import { Toaster } from 'react-hot-toast'
 import { Suspense } from 'react'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const inter = Inter({ subsets: ['latin'] })
 

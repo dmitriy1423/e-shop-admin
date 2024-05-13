@@ -17,6 +17,7 @@ import Spinner from './Spinner'
 import { ReactSortable } from 'react-sortablejs'
 import { ExtendedCategory } from '../categories/page'
 import { JsonValue } from '@prisma/client/runtime/library'
+import Skeleton from 'react-loading-skeleton'
 
 interface ProductFormProps {
 	id?: string
@@ -38,6 +39,7 @@ const ProductForm: FC<ProductFormProps> = ({
 	properties: existingProperties
 }) => {
 	const router = useRouter()
+	const [isCategoriesLoading, setIsCategoriesLoading] = useState(false)
 	const [isUploading, setIsUploading] = useState(false)
 	const [categories, setCategories] = useState<ExtendedCategory[]>([])
 
@@ -62,13 +64,16 @@ const ProductForm: FC<ProductFormProps> = ({
 	})
 
 	useEffect(() => {
-		axios.get('/api/categories').then(result => {
-			setCategories(result.data)
-		})
+		setIsCategoriesLoading(true)
+		axios
+			.get('/api/categories')
+			.then(result => {
+				setCategories(result.data)
+			})
+			.finally(() => setIsCategoriesLoading(false))
 	}, [])
 
 	useEffect(() => {
-		console.log(existingCategoryId)
 		if (existingCategoryId) {
 			axios.get(`/api/categories/${existingCategoryId}`).then(result => {
 				setValue('categoryId', result.data.id)
@@ -127,13 +132,13 @@ const ProductForm: FC<ProductFormProps> = ({
 	const productImages = watch('images')
 	const category = watch('categoryId')
 
-	const propertiesToFill = []
+	const propertiesToFill: any[] = []
 	if (categories.length > 0 && category) {
 		let catInfo = categories.find(({ id }) => id === category)
-		propertiesToFill.push(...catInfo?.properties)
+		propertiesToFill.push(...(catInfo?.properties as []))
 		while (catInfo?.parent?.id) {
 			const parentCat = categories.find(({ id }) => id === catInfo?.parent.id)
-			propertiesToFill.push(...parentCat?.properties)
+			propertiesToFill.push(...(parentCat?.properties as []))
 			catInfo = parentCat
 		}
 	}
@@ -144,16 +149,24 @@ const ProductForm: FC<ProductFormProps> = ({
 				<label>Product name</label>
 				<input {...register('title')} type="text" placeholder="prod name" />
 				<label>Category</label>
-				<select {...register('categoryId')}>
-					<option value={''}>Uncategorized</option>
-					{categories.length > 0 &&
-						categories.map(category => (
-							<option key={category.id} value={category.id}>
-								{category.name}
-							</option>
-						))}
-				</select>
-				{propertiesToFill.length > 0 &&
+				{isCategoriesLoading ? (
+					<Skeleton count={3} height={25} />
+				) : (
+					<select {...register('categoryId')}>
+						<option value={''}>Uncategorized</option>
+						{categories.length > 0 &&
+							categories.map(category => (
+								<option key={category.id} value={category.id}>
+									{category.name}
+								</option>
+							))}
+					</select>
+				)}
+
+				{isCategoriesLoading ? (
+					<Skeleton count={3} height={25} />
+				) : (
+					propertiesToFill.length > 0 &&
 					propertiesToFill.map((p, index) => (
 						<div className="" key={index}>
 							<label>{p.name[0].toUpperCase() + p.name.slice(1)}</label>
@@ -162,7 +175,7 @@ const ProductForm: FC<ProductFormProps> = ({
 									{...register(`properties[${p.name}]`)}
 									defaultValue={getValues(`properties[${p.name}]`)}
 								>
-									{p.values.map((v, idx) => (
+									{p.values.map((v: string, idx: number) => (
 										<option key={idx} value={v}>
 											{v}
 										</option>
@@ -170,7 +183,9 @@ const ProductForm: FC<ProductFormProps> = ({
 								</select>
 							</div>
 						</div>
-					))}
+					))
+				)}
+
 				<label>Photos</label>
 
 				<div className="mb-2 flex flex-wrap gap-1">

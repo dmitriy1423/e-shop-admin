@@ -5,8 +5,13 @@ import prisma from '@/libs/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/actions/getCurrentUser'
 import { SafeUser } from '@/types'
+import { Session } from 'inspector'
 
-const adminEmails = ['01txxt10@gmail.com']
+const isAdminEmail = async (email: string) => {
+	return !!(await prisma.admin.findUnique({
+		where: { email }
+	}))
+}
 
 export const authOptions: AuthOptions = {
 	adapter: PrismaAdapter(prisma),
@@ -17,8 +22,8 @@ export const authOptions: AuthOptions = {
 		})
 	],
 	callbacks: {
-		session: ({ session, token, user }) => {
-			if (adminEmails.includes(session?.user?.email)) {
+		session: async ({ session, token, user }) => {
+			if (await isAdminEmail(session?.user?.email as string)) {
 				return session
 			} else {
 				return false
@@ -40,7 +45,7 @@ export { handler as GET, handler as POST }
 export async function isAdminRequest() {
 	const user = await getCurrentUser()
 
-	if (!adminEmails.includes(user?.email)) {
+	if (!(await isAdminEmail(user?.email as string))) {
 		throw 'not an admin'
 	}
 }

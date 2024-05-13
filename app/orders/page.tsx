@@ -3,14 +3,20 @@
 import { Order } from '@prisma/client'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 
 const Orders = () => {
 	const [orders, setOrders] = useState<Order[]>([])
+	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
-		axios.get('/api/orders').then(response => {
-			setOrders(response.data)
-		})
+		setIsLoading(true)
+		axios
+			.get('/api/orders')
+			.then(response => {
+				setOrders(response.data)
+			})
+			.finally(() => setIsLoading(false))
 	}, [])
 
 	return (
@@ -26,6 +32,15 @@ const Orders = () => {
 					</tr>
 				</thead>
 				<tbody>
+					{isLoading && (
+						<tr>
+							<td colSpan={4}>
+								<div className="py-4">
+									<Skeleton count={10} />
+								</div>
+							</td>
+						</tr>
+					)}
 					{orders.length > 0 &&
 						orders.map(order => (
 							<tr key={order.id}>

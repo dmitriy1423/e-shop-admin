@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useState } from 'react'
 import {
+	MdAdminPanelSettings,
 	MdBadge,
 	MdCategory,
 	MdHome,
@@ -86,6 +87,16 @@ const Nav: FC<NavProps> = ({ isShow, onClick }) => {
 						className={pathname.includes('/orders') ? activeIcon : inactiveIcon}
 					/>{' '}
 					Orders
+				</Link>
+				<Link
+					onClick={onClick}
+					href={'/admins'}
+					className={pathname.includes('/admins') ? activeLink : inactiveLink}
+				>
+					<MdAdminPanelSettings
+						className={pathname.includes('/admins') ? activeIcon : inactiveIcon}
+					/>{' '}
+					Admins
 				</Link>
 				<Link
 					onClick={onClick}

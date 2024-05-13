@@ -5,14 +5,20 @@ import { useEffect, useState } from 'react'
 import { Product } from '@prisma/client'
 import axios from 'axios'
 import { MdDelete, MdEdit } from 'react-icons/md'
+import Skeleton from 'react-loading-skeleton'
 
 const Products = () => {
 	const [products, setProducts] = useState<Product[]>([])
+	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
-		axios.get('/api/products').then(response => {
-			setProducts(response.data)
-		})
+		setIsLoading(true)
+		axios
+			.get('/api/products')
+			.then(response => {
+				setProducts(response.data)
+			})
+			.finally(() => setIsLoading(false))
 	}, [])
 
 	return (
@@ -28,6 +34,16 @@ const Products = () => {
 					</tr>
 				</thead>
 				<tbody>
+					{isLoading && (
+						<tr>
+							<td colSpan={2}>
+								<div className="py-4">
+									<Skeleton count={10} />
+								</div>
+							</td>
+						</tr>
+					)}
+
 					{products.map(product => (
 						<tr key={product.id}>
 							<td>{product.title}</td>

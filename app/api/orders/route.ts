@@ -7,5 +7,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
 			createdAt: 'desc'
 		}
 	})
+
 	return NextResponse.json(orders)
 }
